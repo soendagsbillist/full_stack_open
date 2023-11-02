@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import entryService from './services/entries'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -45,9 +46,16 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
     }
     else {
-      setPersons(persons.concat(newEntry))
-      setNewName('')
-      setNewNumber('')
+      entryService
+        .create(newEntry)
+        .then(() => {
+					setPersons(persons.concat(newEntry))
+					setNewName('')
+					setNewNumber('')
+        })
+				.catch(error => {
+					console.log(error.response.data.error)
+				})
     }
   }
 
