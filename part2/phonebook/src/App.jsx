@@ -33,6 +33,27 @@ const App = () => {
     setSearchString(event.target.value.toLowerCase())
   }
 
+  const handleDeletion = (entry) => {
+    const handler = () => {
+      if (window.confirm(`Delete ${entry.name}?`)) {
+        entryService
+          .deleteEntry(entry.id)
+          .then(response => {
+            entryService
+              .getAll()
+              .then(returnedPersons => {
+                setPersons(returnedPersons)
+            })
+          })
+          .catch(error => {
+            console.log(error.message)
+            setPersons(persons.filter(p => p.id !== entry.id))
+          })
+      }
+    }
+    return handler
+  }
+
   const addEntry = (event) => {
     event.preventDefault()
     const newEntry = {
@@ -52,6 +73,11 @@ const App = () => {
 					setPersons(persons.concat(newEntry))
 					setNewName('')
 					setNewNumber('')
+          entryService
+            .getAll()
+            .then(returnedPersons => {
+              setPersons(returnedPersons)
+          })
         })
 				.catch(error => {
 					console.log(error.response.data.error)
@@ -71,12 +97,17 @@ const App = () => {
         newNumber={newNumber}
       />
       <h2>Numbers</h2>
-      <Phonebook entries={persons} onChange={handleSearch} searchString={searchString}/>
+      <Phonebook 
+        entries={persons} 
+        onChange={handleSearch} 
+        searchString={searchString} 
+        onClick={handleDeletion}
+      />
     </div>
   )
 }
 
-const Phonebook = ({ entries, onChangeSearch, searchString }) => {
+const Phonebook = ({ entries, onChangeSearch, searchString, onClick }) => {
   const names = entries.map(entry => entry.name.toLowerCase())
   let searchItems = entries.filter((entry) => {
     return entry.name.toLowerCase().includes(searchString)
@@ -87,7 +118,7 @@ const Phonebook = ({ entries, onChangeSearch, searchString }) => {
         <div>
           {entries.map(entry =>
             <div key={entry.number}>
-            {entry.name} {entry.number}
+            {entry.name} {entry.number} <Button onClick={onClick} person={entry} name="delete" />
             </div>
           )}
         </div>
@@ -127,6 +158,17 @@ const Search = ({ onChange }) => {
       <div>
         <div>filter with: <input onChange={onChange} /></div>
       </div>
+  )
+}
+
+const Button = ({ name, onClick, person }) => {
+  const styles = {
+    display: 'inline-block',
+  }
+  return (
+    <div>
+    <button onClick={onClick(person)} style={styles}>{name}</button>
+    </div>
   )
 }
 
