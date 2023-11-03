@@ -41,7 +41,7 @@ const App = () => {
               .getAll()
               .then(returnedPersons => {
                 setPersons(returnedPersons)
-            })
+              })
           })
           .catch(error => {
             console.log(error.message)
@@ -80,18 +80,18 @@ const App = () => {
       entryService
         .create(newEntry)
         .then(() => {
-					setPersons(persons.concat(newEntry))
-					setNewName('')
-					setNewNumber('')
+          setPersons(persons.concat(newEntry))
+          setNewName('')
+          setNewNumber('')
           entryService
             .getAll()
             .then(returnedPersons => {
               setPersons(returnedPersons)
           })
         })
-				.catch(error => {
-					console.log(error.response.data.error)
-				})
+        .catch(error => {
+          console.log(error.response.data.error)
+        })
     }
   }
 
@@ -165,9 +165,9 @@ const ContactForm = ({ onSubmit, onChangeName, onChangeNumber, newName, newNumbe
 
 const Search = ({ onChange }) => {
   return (
-      <div>
-        <div>filter with: <input onChange={onChange} /></div>
-      </div>
+    <div>
+      <div>filter with: <input onChange={onChange} /></div>
+    </div>
   )
 }
 
