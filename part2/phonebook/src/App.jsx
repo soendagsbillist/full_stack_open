@@ -20,12 +20,10 @@ const App = () => {
   }, [])
 
   const handleEntryChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
@@ -62,9 +60,21 @@ const App = () => {
     }
     const names = persons.map(entry => entry.name.toLowerCase())
     let isDuplicate = names.some((name) => names.indexOf(newName.toLowerCase()) !== -1)
+    const entry = persons.find(person => person.name.toLowerCase() === newName.toLowerCase())
+    const changedEntry = {...entry, number: newNumber}
+    
 
     if (isDuplicate === true) {
-      alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        entryService
+          .update(entry.id, changedEntry)
+          .then((returnedEntry => {
+            setPersons(persons.map(person => person.id !== entry.id ? person : returnedEntry)) 
+            setNewName('')
+            setNewNumber('')
+            isDuplicate = false  
+          }))
+      }
     }
     else {
       entryService
